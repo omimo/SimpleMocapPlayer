@@ -1,5 +1,5 @@
 # SimpleMocapPlayer
-A starting point for using MocapJS
+A starting point for using [MocapJS](https://github.com/omimo/MocapJS)
 
 ## Requirements:
 * [Bower](bower.io)
