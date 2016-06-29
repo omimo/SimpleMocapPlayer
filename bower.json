@@ -1,0 +1,30 @@
+{
+  "name": "SimpleMocapPlayer",
+  "homepage": "https://github.com/omimo/SimpleMocapPlayer",
+  "authors": [
+    "Omid <omid.alemi@gmail.com>"
+  ],
+  "description": "A starting point for using MocapJS",
+  "main": "player.html",
+  "keywords": [
+    "mocap",
+    "animation",
+    "webgl"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "MocapJS": "^0.4.1",
+    "three.js": "threejs#*",
+    "jQuery": "^3.0.0",
+    "mathjs": "^3.2.1",
+    "PACE": "pace#^1.0.2",
+    "papaparse": "^4.1.2"
+  }
+}

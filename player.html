@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<!-- WebGl Mocap Player 
+Code provided by Omid Alemi under the MIT License
+ -->
+<html lang="en">
+
+<head>
+    <title>WebGL Mocap Viewer</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <style>
+
+    </style>
+    <link rel="stylesheet" href="styles/pace.css"></link>
+
+    <script src="bower_components/pace/pace.min.js"></script>
+    <script src="bower_components/mathjs/dist/math.min.js"></script>
+    <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="bower_components/three.js/build/three.js"></script>
+    <script src="bower_components/three.js/examples/js/controls/OrbitControls.js"></script>
+    <script src="bower_components/three.js/examples/js/shaders/ParallaxShader.js"></script>
+    <script src="bower_components/papaparse/papaparse.min.js"></script>
+    <script src="bower_components/MocapJS/dist/MocapJS.js"></script>
+
+    <script src="js/skeletonFactory.js"></script>
+</head>
+
+<body>
+    <script type="text/javascript">
+        var scene, camera, renderer;
+        var characters = [];
+        var playing = true;
+        
+
+        // Using the space bar to play/pause the animation
+        $(document).on("keypress", function(e) {
+            if (e.charCode == 32)
+                playing = !playing;
+
+            characters.forEach(function(c) {
+                c.playing = playing;
+
+                if (playing)
+                    c.animStartTimeRef = Date.now();
+                else
+                    c.animOffset = c.animIndex;
+            });
+
+        });
+
+        // Update the renderer and camera when resizeing the window
+        $(window).on("resize", function(e) {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+
+        // This function sets up the scene, i.e., everything you see except the character(s) 
+        function set_the_scene() {
+			
+            // Add the light            
+			light = new THREE.PointLight(0xffffff, 0.9, 0);
+			light.position.set(0, 160, 40);
+			scene.add(light);
+
+
+			// Create a grid for the floor
+			var size = 200,
+				step = 20;
+
+            // Draw the plane
+			var planeGeometry = new THREE.PlaneGeometry(size * 2, size * 2);
+			var planeMaterial = new THREE.MeshPhongMaterial({
+				color: 0x444444,
+				emissive: 0x000000,
+				specular: 0x111111,
+				side: THREE.DoubleSide,
+				transparent: true,
+				opacity: 0.6
+			});
+			var plane = new THREE.Mesh(planeGeometry, planeMaterial);
+			plane.position.set(0, 0, 0);
+			plane.rotation.set(math.pi / 2, 0, 0);
+			scene.add(plane);
+
+            //Draw the lines
+			var lineGeometry = new THREE.Geometry();
+			var lineMaterial = new THREE.LineBasicMaterial({
+				color: 0x555555,
+				linewidth: 1.2
+			});
+			for (var i = -size; i <= size; i += step) {
+				lineGeometry.vertices.push(new THREE.Vector3(-size, -0.04, i));
+				lineGeometry.vertices.push(new THREE.Vector3(size, -0.04, i));
+				lineGeometry.vertices.push(new THREE.Vector3(i, -0.04, -size));
+				lineGeometry.vertices.push(new THREE.Vector3(i, -0.04, size));
+			}
+
+			var line = new THREE.LineSegments(lineGeometry, lineMaterial);
+			scene.add(line);
+		}
+
+        // Initialize the three.js stuff
+        function init() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 1, 6000);
+            camera.position.set(0, 80, 0);
+            camera.position.z = 400;
+            scene.add(camera);
+
+            set_the_scene();
+
+            // Here, we creare our characters
+            c1 = new BVHCharacter("Walker",  // Give it a name. Usefull for debugging.
+                    jointmaterial4,  // The material that the character uses for joints. Defined in the skeletonFactory.js
+                    bonematerial5,  // The material that the character uses for bones. Defined in the skeletonFactory.js
+                    makeJointGeometry_Sphere1, // Pointer to the function that creates the geometries for joints. Defined in the skeletonFactory.js
+                    makeBoneGeometry_Cylinder2); // Pointer to the function that creates the geometries for bones. Defined in the skeletonFactory.js
+
+            c1.setOriginPosition(0, 0, 0); // We can position the character's defult position here
+            c1.loadFromURL("resources/SampleWalk.bvh", function() { // Read the .bvh file
+                scene.add(c1.skeleton); // Once the character has loaded the file, we add it's skeleton to the scene 
+            });
+
+            characters.push(c1); // We add the character to the characters array so that we can update the animation
+
+
+            // Here goes the renderer parameters
+            renderer = new THREE.WebGLRenderer({
+                antialias: true
+            });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.gammaInput = true;
+            renderer.gammaOutput = true;
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setClearColor(0xdddddd, 1);
+
+            document.body.appendChild(renderer.domElement);
+
+            // Using mouse to control the the camera
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            characters.forEach(function(c) {
+                if (c.ready && c.playing) {
+                        // Update the new frame index to be animated                   
+                        c.animIndex = c.animOffset + Math.floor((Date.now() - c.animStartTimeRef) / c.frameTime / 1000);
+
+                        // Looping back once we hit the end
+                        if (c.animIndex >= c.frameCount) {
+                            c.animOffset = 0;
+                            c.animStartTimeRef = Date.now();
+                            c.animIndex = 0;
+                        }
+
+                        // Animate!
+                        c.animFrame(c.animIndex);
+                }
+            });
+            controls.update();
+            renderer.render(scene, camera);
+        }
+    </script>
+
+
+
+
+    <script>    
+        init();
+
+        animate();        
+    </script>
+</body>
+
+</html>
