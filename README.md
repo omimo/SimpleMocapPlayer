@@ -15,6 +15,7 @@ $ git clone https://github.com/omimo/SimpleMocapPlayer.git
 2. Install the third-party packages and libraries using bower:
 
 ```
+ $ cd SimpleMocapPlayer/
  $ bower install
 ```
 
@@ -26,6 +27,6 @@ $ python -m SimpleHTTPServer
 
 4. Open the player.html in the browser, using the URL:
 
-```
-htttp://localhost:8000/player.html
-```
+
+[http://localhost:8000/player.html](http://localhost:8000/player.html)
+
