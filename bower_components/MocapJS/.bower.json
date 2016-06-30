@@ -1,0 +1,33 @@
+{
+  "name": "MocapJS",
+  "homepage": "http://omid.al/Mocap.js",
+  "authors": [
+    "Omid Alemi <omid.alemi@gmail.com>"
+  ],
+  "description": "\"A motion capture library for Three.js: Playing | Streaming | VR\"",
+  "main": "dist/MocapJS.js",
+  "keywords": [
+    "mocap",
+    "three.js",
+    "animation"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "version": "0.4.1",
+  "_release": "0.4.1",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.4.1",
+    "commit": "16233d9d317b71376234c8e5b5f455ce0a571589"
+  },
+  "_source": "https://github.com/omimo/MocapJS.git",
+  "_target": "^0.4.1",
+  "_originalSource": "MocapJS",
+  "_direct": true
+}

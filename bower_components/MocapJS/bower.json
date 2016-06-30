@@ -1,0 +1,22 @@
+{
+  "name": "MocapJS",
+  "homepage": "http://omid.al/Mocap.js",
+  "authors": [
+    "Omid Alemi <omid.alemi@gmail.com>"
+  ],
+  "description": "\"A motion capture library for Three.js: Playing | Streaming | VR\"",
+  "main": "dist/MocapJS.js",
+  "keywords": [
+    "mocap",
+    "three.js",
+    "animation"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
